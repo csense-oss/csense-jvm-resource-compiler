@@ -1,0 +1,51 @@
+apply plugin: "kotlin"
+apply plugin: 'application'
+
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation "csense.kotlin:csense-kotlin-jvm:$csensekotlinVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-javafx:$coroutinesVersion"
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions {
+        freeCompilerArgs = ["-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
+                            "-Xuse-experimental=kotlin.Experimental"]
+    }
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+tasks.register("runJar") { it ->
+    it.outputs.dir file("$projectDir/src/main/kotlin/csense/example/app/generated/")
+    it.inputs.dir file("$projectDir/src/main/resources/")
+    doFirst {
+        javaexec {
+            main = "-jar"
+            args = [
+                    "$projectDir/../resource-compiler/compiler.jar",
+                    "../example-app",
+                    "src/main/kotlin",
+                    "src/main/resources",
+                    "csense.example.app.generated",
+                    "resources.kt",
+                    "internal",
+                    "true"
+            ]
+        }
+    }
+}
+
+tasks.assemble.dependsOn tasks.runJar
+tasks.build.dependsOn tasks.runJar
+tasks.compileKotlin.dependsOn tasks.runJar
+tasks.compileJava.dependsOn tasks.runJar
+//for (def task in tasks) {
+//    if (task != tasks."runJar") {
+//        task.dependsOn tasks.runJar
+//    }
+//}

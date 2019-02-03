@@ -1,0 +1,3 @@
+include("resource-compiler",
+        'example-app')
+
