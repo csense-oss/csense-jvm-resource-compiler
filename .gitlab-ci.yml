@@ -10,26 +10,14 @@ cache:
     - .gradle/wrapper
 
 stages:
-  - build
-  - test
-  - bundle
-  - deploy
+  - all
 
 build:
-  stage: build
+  stage: all
   script:
-    - ./gradlew :resource-compiler:assemble
-
-unitTests:
-  stage: test
-  script:
-    - ./gradlew :resource-compiler:test
-
-deploy:
-  stage: bundle
-  script:
-    - ./gradlew :resource-compiler:proguard
+    - ./gradlew :resource-compiler:assemble:resource-compiler:test :resource-compiler:proguard
   artifacts:
     paths:
       - resource-compiler/build/libs/ => compiler
     expire_in: 1 week
+
