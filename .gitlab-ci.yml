@@ -18,6 +18,8 @@ build:
     - ./gradlew :resource-compiler:assemble :resource-compiler:test :resource-compiler:shadowJar :resource-compiler:proguard
   artifacts:
     paths:
-      - /resource-compiler/build/libs/
+      - resource-compiler/build/libs/
     expire_in: 1 week
 
+after_script:
+  - ls -l
