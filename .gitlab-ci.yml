@@ -20,6 +20,3 @@ build:
     paths:
       - resource-compiler/build/libs/
     expire_in: 1 week
-
-after_script:
-  - ls -l
