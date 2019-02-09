@@ -1,5 +1,6 @@
 package csense.javafx.resource.compiler.resource.handlers
 
+import csense.javafx.resource.compiler.kotlin.writer.*
 import kotlinx.coroutines.Deferred
 import java.nio.file.Path
 
@@ -12,20 +13,27 @@ interface IResourceHandler<T : BaseValidationResultItem> {
      */
     fun acceptsFile(file: Path, fileName: String): Boolean
 
-    fun onValidateAndCreateResult(): Deferred<ValidationSuccess<T>>
+    fun onValidateAndCreateResult(resourceRoot: Path): Deferred<ValidationSuccess<T>>
+
+    fun onCreateClassesFromValidation(items: ValidationSuccess<T>): Deferred<List<KotlinResourceFile>>
+
 
 }
 
 class ValidationSuccess<T : BaseValidationResultItem>(
-    val item: List<T>
+        val item: List<T>
 )
 
-interface BaseValidationResultItem {
-    val name: String
-    val relativeLocationToRoot: String
-}
+open class BaseValidationResultItem(
+        val name: String,
+        val relativeLocationToRoot: String,
+        val extension: String
+)
 
-interface BaseLocalizableValidationResultItem : BaseValidationResultItem {
-    val namesToLookup: Set<String>
-    val localizedLanguages: Set<String>
-}
+open class BaseLocalizableValidationResultItem(
+        name: String,
+        relativeLocationToRoot: String,
+        extension: String,
+        val namesToLookup: Set<String>,
+        val localizedLanguages: Set<String>
+) : BaseValidationResultItem(name, relativeLocationToRoot, extension)

@@ -2,7 +2,7 @@
 -outjars      /build/libs/resource-compiler-1.0-SNAPSHOT-optimized.jar
 -libraryjars  <java.home>/lib/rt.jar
 -printmapping myapplication.map
-
+-dontwarn
 
 -verbose
 -optimizationpasses 5
@@ -19,6 +19,10 @@
 -keep public class csense.javafx.resource.compiler.MainKt {
       public static void main(java.lang.String[]);
 }
+
+#-keep public class csense.javafx.resource.compiler.kotlin.writer.* {
+#    *;
+#}
 -assumenosideeffects class kotlin.jvm.internal.Intrinsics {
     static void checkParameterIsNotNull(java.lang.Object, java.lang.String);
 }

@@ -1,11 +1,24 @@
 package csense.javafx.resource.compiler.properties
 
 import java.io.*
-import java.nio.ByteBuffer
-import java.nio.channels.FileChannel
-import java.nio.file.Path
+import java.nio.*
+import java.nio.channels.*
+import java.nio.file.*
+
+//Original copyright
+/*
+ Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
+ * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+*/
+// Changes made are visible in GIT, and simply put, optimizations
+// There are no warranty as in according with the GPL linked below.
+
 
 /**
+ * see license of this
+ * http://openjdk.java.net/legal/gplv2+ce.html
+ * To obtain the original code you are to find it though the openJDK in a file called Properties.java
+ *
  * Reads java property files but without the old api and not being able to modify them
  * @property innerData HashMap<String, String>
  * @property data Map<String, String>
@@ -89,7 +102,7 @@ class PropertyReader {
      */
     internal inner class LineReader(private var reader: FileChannel) {
 
-        val inByteBuf = ByteBuffer.allocate(8096)
+        val inByteBuf = ByteBuffer.allocate(reader.size().toInt())
         var lineBuf = CharArray(1024)
         var inLimit = 0
         var inOff = 0
@@ -240,7 +253,7 @@ class PropertyReader {
                             'a', 'b', 'c', 'd', 'e', 'f' -> (value shl 4) + 10 + aChar.toInt() - 'a'.toInt()
                             'A', 'B', 'C', 'D', 'E', 'F' -> (value shl 4) + 10 + aChar.toInt() - 'A'.toInt()
                             else -> throw IllegalArgumentException(
-                                "Malformed \\uxxxx encoding."
+                                    "Malformed \\uxxxx encoding."
                             )
                         }
                     }

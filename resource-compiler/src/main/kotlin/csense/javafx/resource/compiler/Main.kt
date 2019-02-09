@@ -1,11 +1,9 @@
 package csense.javafx.resource.compiler
 
-import csense.javafx.resource.compiler.reader.ProjectReader
-import csense.javafx.resource.compiler.resource.handlers.*
+import csense.javafx.resource.compiler.reader.*
 import csense.kotlin.extensions.toPrettyString
 import csense.kotlin.logger.L
 import csense.kotlin.logger.LoggingFunctionType
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -33,22 +31,13 @@ suspend fun main(args: Array<String>): Unit = coroutineScope {
             ProjectReader(parsed.resourceRoot, mainFlow.allInAList).findFiles()
         }
         L.debug("Main", "Discovering all file took ${readAllFilesTime}ms")
-        val propertiesResult = mainFlow.properties.onValidateAndCreateResult().await()
-        propertiesResult.printWarnings()
+
+        mainFlow.computeAll(parsed, this)
+
     }
     L.logProd("Main", "Finished in ${totalTime}ms")
 }
 
-private fun ValidationSuccess<PropertyHandlerSuccessItem>.printWarnings() {
-    item.forEach {
-        if (it.missingTranslationsInLanguages.isNotEmpty()) {
-            L.error(
-                "Translations",
-                "found missing translations in language files; ${it.missingTranslationsInLanguages}"
-            )
-        }
-    }
-}
 
 fun readStdInLine() {
     val br = BufferedReader(InputStreamReader(System.`in`))
@@ -56,26 +45,22 @@ fun readStdInLine() {
     br.readLine()
 }
 
-class MainFlow(val coroutineScope: CoroutineScope) {
-    val properties: PropertiesHandler = PropertiesHandler(coroutineScope)
-
-
-    val allInAList: List<IResourceHandler<*>> = listOf(properties)
-}
 
 /**
  *
  */
 typealias FunctionLoggerFormatter = (level: LoggingLevel, tag: String, message: String, error: Throwable?) -> String
 
+
+//TOOD waiting for Csense
 /**
  * This will add a logger to each category using the stdout (console).
  * @receiver L
  */
 fun L.usePrintAsLoggers(
-    formatter: FunctionLoggerFormatter = { level: LoggingLevel, tag: String, message: String, exception: Throwable? ->
-        "$level - [$tag] $message ${exception?.toPrettyString()}"
-    }
+        formatter: FunctionLoggerFormatter = { level: LoggingLevel, tag: String, message: String, exception: Throwable? ->
+            "$level - [$tag] $message ${exception?.toPrettyString()}"
+        }
 ) {
 
     val debug: LoggingFunctionType<Any> = { tag: String, message: String, exception: Throwable? ->
@@ -90,10 +75,10 @@ fun L.usePrintAsLoggers(
     val prod: LoggingFunctionType<Any> = { tag: String, message: String, exception: Throwable? ->
         println(formatter(LoggingLevel.Production, tag, message, exception))
     }
-    L.debugLoggers.add(debug)
-    L.warningLoggers.add(warning)
-    L.errorLoggers.add(error)
-    L.productionLoggers.add(prod)
+    debugLoggers.add(debug)
+    warningLoggers.add(warning)
+    errorLoggers.add(error)
+    productionLoggers.add(prod)
 }
 
 /**
@@ -129,38 +114,3 @@ fun LoggingLevel.wrapInAsciiColor(): String {
     }
     return "\u001B[$color$stringValue\u001B[0m"
 }
-
-//@UseExperimental(ObsoleteCoroutinesApi::class)
-//fun L.useAsyncPrintAsLoggers(
-//    formatter: FunctionLoggerFormatter = { level: LoggingLevel, tag: String, message: String, exception: Throwable? ->
-//        "$level - [$tag] $message ${exception?.toPrettyString() ?: ""}"
-//    }
-//): ExecutorService {
-//    val executor = Executors.newSingleThreadExecutor()
-//    val context = executor.asCoroutineDispatcher()
-//    val debug: LoggingFunctionType<Any> = { tag: String, message: String, exception: Throwable? ->
-//        GlobalScope.launch(context) {
-//            println(formatter(LoggingLevel.Debug, tag, message, exception))
-//        }
-//    }
-//    val warning: LoggingFunctionType<Any> = { tag: String, message: String, exception: Throwable? ->
-//        GlobalScope.launch(context) {
-//            println(formatter(LoggingLevel.Warning, tag, message, exception))
-//        }
-//    }
-//    val error: LoggingFunctionType<Any> = { tag: String, message: String, exception: Throwable? ->
-//        GlobalScope.launch(context) {
-//            println(formatter(LoggingLevel.Error, tag, message, exception))
-//        }
-//    }
-//    val prod: LoggingFunctionType<Any> = { tag: String, message: String, exception: Throwable? ->
-//        GlobalScope.launch(context) {
-//            println(formatter(LoggingLevel.Production, tag, message, exception))
-//        }
-//    }
-//    L.debugLoggers.add(debug)
-//    L.warningLoggers.add(warning)
-//    L.errorLoggers.add(error)
-//    L.productionLoggers.add(prod)
-//    return executor
-//}

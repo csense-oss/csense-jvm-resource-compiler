@@ -11,7 +11,7 @@ fun String.toPropertyName(shouldUseCamelCase: Boolean): String {
         return replace(".", "_")
     }
     var resultingName = this
-    val charsToReplace = listOf(".", "_")
+    val charsToReplace = listOf(".", "_","-")
     charsToReplace.forEach {
         var index = resultingName.indexOf(it)
         while (index >= 0 && index + 1 < resultingName.length) {

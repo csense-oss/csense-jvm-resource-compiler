@@ -22,9 +22,9 @@ fun Path.loadProperties(): PropertyReader = PropertyReader.read(this)
 
 
 inline fun Path.onLanguageIdentifier(
-    allLanguages: Set<String>,
-    crossinline onMainLanguage: (path: Path) -> Unit,
-    crossinline onSubLanguage: (path: Path, language: String, fileName: String) -> Unit
+        allLanguages: Set<String>,
+        crossinline onMainLanguage: (path: Path) -> Unit,
+        crossinline onSubLanguage: (path: Path, language: String, fileName: String) -> Unit
 ) {
     val name = fileName.toString().removeFileExtension()
     val lastUnderscore = name.lastIndexOf('_')
@@ -42,12 +42,6 @@ inline fun Path.onLanguageIdentifier(
     }
 }
 
-
-data class PathWithLang(
-    val realPath: Path,
-    val language: String?
-)
-
 /**
  * Computes the filename with the "_$language"
  * @receiver PropertyLoadingItemLanguage
@@ -55,4 +49,14 @@ data class PathWithLang(
  */
 fun PropertyLoadingItemLanguage.fileNameWithoutLanguage(): String {
     return fileName.substring(0, fileName.length - (language.length + 1))
+}
+
+fun Path.computeRelativeWithNoFileName(subPath: Path): String {
+    val withFilename = relativize(subPath).toString().replace("\\", "/")
+    val lastPart = withFilename.lastIndexOf("/")
+    return if (lastPart < 0) {
+        ""
+    } else {
+        withFilename.substring(0, lastPart + 1) //to include the "/"
+    }
 }

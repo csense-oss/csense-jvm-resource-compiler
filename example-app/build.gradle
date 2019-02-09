@@ -1,5 +1,5 @@
 apply plugin: "kotlin"
-apply plugin: 'application'
+//apply plugin: 'application'
 
 
 dependencies {
@@ -44,8 +44,3 @@ tasks.assemble.dependsOn tasks.runJar
 tasks.build.dependsOn tasks.runJar
 tasks.compileKotlin.dependsOn tasks.runJar
 tasks.compileJava.dependsOn tasks.runJar
-//for (def task in tasks) {
-//    if (task != tasks."runJar") {
-//        task.dependsOn tasks.runJar
-//    }
-//}

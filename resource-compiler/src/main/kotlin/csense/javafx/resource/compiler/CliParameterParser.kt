@@ -24,7 +24,7 @@ fun Array<String>.parseArgs(): ParsedArgs? {
         Paths.get("$roothPath/src/main/resources/"),
         "csense.example.app.generated",
         "resources.kt",
-        KotlinAccessLevel.public,
+        KotlinAccessLevel.Public,
         true
     )
 //

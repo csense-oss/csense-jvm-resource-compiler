@@ -9,16 +9,22 @@ buildscript {
     }
     dependencies {
         classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
-        classpath("net.sf.proguard:proguard-gradle:6.0.3")
+        // https://sourceforge.net/projects/proguard/files/proguard%20beta/6.1beta/
+        classpath("net.sf.proguard:proguard-gradle:6.1.0beta2")
     }
 }
 apply plugin: 'com.github.johnrengelman.shadow'
 group 'csense'
 version '1.0-SNAPSHOT'
+
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     implementation "csense.kotlin:csense-kotlin-jvm:$csensekotlinVersion"
+
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
+
+    testImplementation 'junit:junit:4.12'
+    testImplementation "csense.kotlin:csense-kotlin-test-jvm:$csensekotlinVersion"
 }
 
 compileKotlin {
