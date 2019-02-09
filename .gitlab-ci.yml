@@ -15,7 +15,7 @@ stages:
 build:
   stage: all
   script:
-    - ./gradlew :resource-compiler:assemble:resource-compiler:test :resource-compiler:proguard
+    - ./gradlew :resource-compiler:assemble :resource-compiler:test :resource-compiler:proguard
   artifacts:
     paths:
       - resource-compiler/build/libs/ => compiler
