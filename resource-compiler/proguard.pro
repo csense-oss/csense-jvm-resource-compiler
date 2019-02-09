@@ -1,7 +1,5 @@
--injars       /build/libs/resource-compiler-1.0-SNAPSHOT.jar
--outjars      /build/libs/resource-compiler-1.0-SNAPSHOT-optimized.jar
 -libraryjars  <java.home>/lib/rt.jar
--printmapping myapplication.map
+#-printmapping myapplication.map
 -dontwarn
 
 -verbose

@@ -44,4 +44,6 @@ application {
 task proguard(type: ProGuardTask, dependsOn: shadowJar) {
     configuration 'proguard.pro'
     outputs.upToDateWhen { false }
+    injars "$buildDir/libs/resource-compiler-1.0-SNAPSHOT.jar"
+    outjars "$buildDir/libs/resource-compiler-1.0-SNAPSHOT-optimized.jar"
 }
