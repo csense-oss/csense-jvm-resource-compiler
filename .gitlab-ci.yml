@@ -18,12 +18,12 @@ stages:
 build:
   stage: build
   script:
-    - ./gradlew assemble
+    - ./gradlew :resource-compiler:assemble
 
 unitTests:
   stage: test
   script:
-    - ./gradlew test
+    - ./gradlew :resource-compiler:test
 
 deploy:
   stage: bundle
