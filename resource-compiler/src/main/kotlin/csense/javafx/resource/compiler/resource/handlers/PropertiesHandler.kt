@@ -13,9 +13,10 @@ import csense.kotlin.extensions.coroutines.*
 import csense.kotlin.logger.*
 import kotlinx.coroutines.*
 import java.nio.file.*
+import java.util.*
 import kotlin.collections.set
 
-typealias  PropertyLoaderType = Pair<Path, Deferred<PropertyReader>>
+typealias  PropertyLoaderType = Pair<Path, Deferred<Properties>>
 
 class PropertiesHandler(
         val scope: CoroutineScope
@@ -106,11 +107,11 @@ class PropertiesHandler(
     private suspend fun PropertyBundle.awaitAllFiles(): Pair<Set<String>, List<TranslationsForLanguage>> {
         val (subTimeInMs: Long, subFiles: List<TranslationsForLanguage>) = measureTimeMillisResult {
             subLanguages.mapAsyncAwait(scope, Dispatchers.Default) {
-                TranslationsForLanguage(it.deferredLoading.await().data.keys, it.language)
+                TranslationsForLanguage(it.deferredLoading.await().stringPropertyNames(), it.language)
             }
         }
         logClassDebug("Time for loading all sub lang properties files: ${subTimeInMs}ms")
-        val mainFile: Set<String> = main.deferredLoading.await().data.keys
+        val mainFile: Set<String> = main.deferredLoading.await().stringPropertyNames()
         return Pair(mainFile, subFiles)
     }
 
@@ -164,17 +165,17 @@ data class TranslationsForLanguage(
 
 data class RootComputation(
         val path: Path,
-        val deferredLoading: Deferred<PropertyReader>,
+        val deferredLoading: Deferred<Properties>,
         val subLangs: MutableList<PropertyLoadingItemLanguage>
 )
 
 
-data class PropertyLoadingItem(val path: Path, val deferredLoading: Deferred<PropertyReader>)
+data class PropertyLoadingItem(val path: Path, val deferredLoading: Deferred<Properties>)
 
 data class PropertyLoadingItemLanguage(
         val path: Path,
         val fileName: String,
-        val deferredLoading: Deferred<PropertyReader>,
+        val deferredLoading: Deferred<Properties>,
         val language: String
 )
 

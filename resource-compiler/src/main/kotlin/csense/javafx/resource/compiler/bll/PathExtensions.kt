@@ -1,13 +1,10 @@
 package csense.javafx.resource.compiler.bll
 
-import csense.javafx.resource.compiler.properties.PropertyReader
-import csense.javafx.resource.compiler.resource.handlers.PropertyLoadingItemLanguage
-import csense.kotlin.Function1
-import csense.kotlin.extensions.measureTimeMillisResult
-import csense.kotlin.extensions.primitives.removeFileExtension
-import java.io.IOException
-import java.nio.file.Path
-import java.nio.file.Paths
+import csense.javafx.resource.compiler.resource.handlers.*
+import csense.kotlin.extensions.primitives.*
+import java.io.*
+import java.nio.file.*
+import java.util.*
 
 fun Path.fileNameWithoutExtension(): String = fileName.toString().removeFileExtension()
 
@@ -18,7 +15,11 @@ fun Path.fileNameWithoutExtension(): String = fileName.toString().removeFileExte
  * @throws IOException
  */
 @Throws(IOException::class)
-fun Path.loadProperties(): PropertyReader = PropertyReader.read(this)
+fun Path.loadProperties(): Properties {
+    val result = Properties()
+    this.toFile().inputStream().use { result.load(it) }
+    return result
+}
 
 
 inline fun Path.onLanguageIdentifier(
