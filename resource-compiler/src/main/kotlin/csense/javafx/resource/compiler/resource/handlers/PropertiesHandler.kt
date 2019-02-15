@@ -3,7 +3,6 @@ package csense.javafx.resource.compiler.resource.handlers
 import csense.javafx.resource.compiler.*
 import csense.javafx.resource.compiler.bll.*
 import csense.javafx.resource.compiler.kotlin.writer.*
-import csense.javafx.resource.compiler.properties.*
 import csense.javafx.resource.compiler.resource.handlers.base.*
 import csense.javafx.resource.compiler.setIfNotEmpty
 import csense.kotlin.extensions.*
